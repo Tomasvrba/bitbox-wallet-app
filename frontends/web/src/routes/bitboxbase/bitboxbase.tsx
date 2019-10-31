@@ -23,7 +23,7 @@ import { Button, Input } from '../../components/forms';
 import { SwissMadeOpenSource } from '../../components/icon';
 import { Header } from '../../components/layout/header';
 import { PasswordRepeatInput } from '../../components/password';
-import Spinner from '../../components/spinner/Spinner';
+// import Spinner from '../../components/spinner/Spinner';
 import { Step, Steps } from '../../components/steps';
 import * as stepStyle from '../../components/steps/steps.css';
 import WaitDialog from '../../components/wait-dialog/wait-dialog';
@@ -33,7 +33,8 @@ import { apiSubscribe } from '../../utils/event';
 import { apiGet, apiPost } from '../../utils/request';
 import { BaseSettings } from './basesettings';
 import * as style from './bitboxbase.css';
-import { SharedBaseProps, store as baseStore } from './bitboxbaseconnect';
+// import { SharedBaseProps, store as baseStore } from './bitboxbaseconnect';
+import { SharedBaseProps } from './bitboxbaseconnect';
 
 export interface BitBoxBaseProps {
     bitboxBaseID: string | null;
@@ -147,8 +148,8 @@ class BitBoxBase extends Component<Props, State> {
     public componentDidMount() {
         this.onChannelHashChanged();
         this.onStatusChanged();
-        this.getBaseInfo();
-        this.getServiceInfo();
+        // this.getBaseInfo();
+        // this.getServiceInfo();
         this.unsubscribe = apiSubscribe('/' + this.apiPrefix() + '/event', ({ object }) => {
             switch (object) {
                 case 'statusChanged':
@@ -158,7 +159,7 @@ class BitBoxBase extends Component<Props, State> {
                     this.onChannelHashChanged();
                     break;
                 case 'verificationProgressChanged':
-                    this.getServiceInfo();
+                    // this.getServiceInfo();
                     break;
                 case 'disconnect':
                     this.onDisconnect();
@@ -218,8 +219,8 @@ class BitBoxBase extends Component<Props, State> {
                         locked: false,
                         showWizard: false,
                     });
-                    this.getBaseInfo();
-                    this.getServiceInfo();
+                    // this.getBaseInfo();
+                    // this.getServiceInfo();
                     break;
                 default:
                     break;
@@ -227,30 +228,30 @@ class BitBoxBase extends Component<Props, State> {
         });
     }
 
-    private getServiceInfo = () => {
-        apiGet(this.apiPrefix() + '/service-info').then(({success, serviceInfo}) => {
-            if (success) {
-                this.setState({ serviceInfo });
-            }
-        });
-    }
+    // private getServiceInfo = () => {
+    //     apiGet(this.apiPrefix() + '/service-info').then(({success, serviceInfo}) => {
+    //         if (success) {
+    //             this.setState({ serviceInfo });
+    //         }
+    //     });
+    // }
 
-    private getBaseInfo = () => {
-        apiGet(this.apiPrefix() + '/base-info').then(({ success, baseInfo }) => {
-            const activeBases = baseStore.state.activeBases;
-            if (success && this.props.bitboxBaseID) {
-                this.setState({ baseInfo });
-                // FIXME: handle active bases in the backend
-                activeBases.push({ [this.props.bitboxBaseID]: baseInfo });
-                baseStore.setState({ activeBases });
-            }
-        });
-    }
+    // private getBaseInfo = () => {
+    //     apiGet(this.apiPrefix() + '/base-info').then(({ success, baseInfo }) => {
+    //         const activeBases = baseStore.state.activeBases;
+    //         if (success && this.props.bitboxBaseID) {
+    //             this.setState({ baseInfo });
+    //             // FIXME: handle active bases in the backend
+    //             activeBases.push({ [this.props.bitboxBaseID]: baseInfo });
+    //             baseStore.setState({ activeBases });
+    //         }
+    //     });
+    // }
 
     private onUserAuthenticated = () => {
         // When a user authenticates, authenticated RPC calls are now available, so we can fetch the base info
-        this.getBaseInfo();
-        this.getServiceInfo();
+        // this.getBaseInfo();
+        // this.getServiceInfo();
     }
 
     private connectElectrum = () => {
@@ -380,8 +381,8 @@ class BitBoxBase extends Component<Props, State> {
             waitDialog,
             locked,
             syncingOption,
-            baseInfo,
-            serviceInfo,
+            // baseInfo,
+            // serviceInfo,
         }: State,
     ) {
         // TODO: Move wizard to basewizard.tsx and refactor
@@ -392,19 +393,19 @@ class BitBoxBase extends Component<Props, State> {
                 );
             }
 
-            if (baseInfo && serviceInfo) {
-                return (
-                    <BaseSettings
-                        baseID={bitboxBaseID}
-                        baseInfo={baseInfo}
-                        serviceInfo={serviceInfo}
-                        disconnect={this.removeBitBoxBase}
-                        connectElectrum={this.connectElectrum} />
-                );
-            }
+            // if (baseInfo && serviceInfo) {
             return (
-                <Spinner text="Connecting your BitBoxBase" />
+                <BaseSettings
+                    baseID={bitboxBaseID}
+                    // baseInfo={baseInfo}
+                    // serviceInfo={serviceInfo}
+                    disconnect={this.removeBitBoxBase}
+                    connectElectrum={this.connectElectrum} />
             );
+            // }
+            // return (
+                // <Spinner text="Connecting your BitBoxBase" />
+            // );
         }
 
         return (

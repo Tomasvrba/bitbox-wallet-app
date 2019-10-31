@@ -17,15 +17,15 @@
 import { Component, h, RenderableProps } from 'preact';
 import { Header } from '../../components/layout/header';
 import { SettingsButton } from '../../components/settingsButton/settingsButton';
-import { SettingsItem } from '../../components/settingsButton/settingsItem';
+// import { SettingsItem } from '../../components/settingsButton/settingsItem';
 import { translate, TranslateProps } from '../../decorators/translate';
-import { BitBoxBaseInfo, BitBoxBaseServiceInfo } from './bitboxbase';
+// import { BitBoxBaseInfo, BitBoxBaseServiceInfo } from './bitboxbase';
 import * as style from './bitboxbase.css';
 
 interface SettingsProps {
     baseID: string | null;
-    baseInfo: BitBoxBaseInfo;
-    serviceInfo: BitBoxBaseServiceInfo;
+    // baseInfo: BitBoxBaseInfo;
+    // serviceInfo: BitBoxBaseServiceInfo;
     disconnect: () => void;
     connectElectrum: () => void;
 }
@@ -47,8 +47,8 @@ class BaseSettings extends Component<Props, State> {
     public render(
         {
             t,
-            serviceInfo,
-            baseInfo,
+            // serviceInfo,
+            // baseInfo,
             disconnect,
             connectElectrum,
         }: RenderableProps<Props>,
@@ -64,19 +64,19 @@ class BaseSettings extends Component<Props, State> {
                         <div className={style.dashboardContainer}>
                             <div className={[style.dashboard, expandedDashboard ? style.expanded : ''].join(' ')}>
                                 <div className={style.nameStatus}>
-                                    <p>{baseInfo.hostname}</p>
-                                    <p><span className={[style.statusBadge, style.online].join(' ')}></span>{baseInfo.status}</p>
+                                    {/* <p>{baseInfo.hostname}</p>
+                                    <p><span className={[style.statusBadge, style.online].join(' ')}></span>{baseInfo.status}</p> */}
                                 </div>
                                 <div className={style.items}>
                                     <div className={style.item}>
                                         <div className={style.dashboardItem}>
-                                            <p>{Math.round(100 * serviceInfo.bitcoindVerificationProgress)}%</p>
+                                            {/* <p>{Math.round(100 * serviceInfo.bitcoindVerificationProgress)}%</p> */}
                                             <p>Sync status</p>
                                         </div>
                                     </div>
                                     <div className={style.item}>
                                         <div className={style.dashboardItem}>
-                                            <p>{serviceInfo.bitcoindPeers}</p>
+                                            {/* <p>{serviceInfo.bitcoindPeers}</p> */}
                                             <p>Connected peers</p>
                                         </div>
                                     </div>
@@ -97,10 +97,10 @@ class BaseSettings extends Component<Props, State> {
                                                     </div>
                                                 </div>
                                                 <div className="box slim divide">
-                                                    <SettingsItem optionalText={baseInfo.middlewareLocalIP}>{t('bitboxBase.settings.advanced.ipAddress')}</SettingsItem>
-                                                    <SettingsItem optionalText={baseInfo.middlewareLocalPort}>{t('bitboxBase.settings.advanced.port')}</SettingsItem>
-                                                    <SettingsItem optionalText={baseInfo.middlewareTorOnion}>Tor Onion address</SettingsItem>
-                                                    <SettingsItem optionalText={baseInfo.middlewareTorPort}>Tor port</SettingsItem>
+                                                    {/* <SettingsItem optionalText={baseInfo.middlewareLocalIP}>{t('bitboxBase.settings.advanced.ipAddress')}</SettingsItem> */}
+                                                    {/* <SettingsItem optionalText={baseInfo.middlewareLocalPort}>{t('bitboxBase.settings.advanced.port')}</SettingsItem> */}
+                                                    {/* <SettingsItem optionalText={baseInfo.middlewareTorOnion}>Tor Onion address</SettingsItem> */}
+                                                    {/* <SettingsItem optionalText={baseInfo.middlewareTorPort}>Tor port</SettingsItem> */}
                                                 </div>
                                             </div>
                                             <div className="column column-1-3">
@@ -110,10 +110,10 @@ class BaseSettings extends Component<Props, State> {
                                                     </div>
                                                 </div>
                                                 <div className="box slim divide">
-                                                    <SettingsItem optionalText={baseInfo.bitcoindVersion}>Version</SettingsItem>
-                                                    <SettingsItem optionalText={baseInfo.isBitcoindListening ? 'Listening' : 'Offline'}>Status</SettingsItem>
-                                                    <SettingsItem optionalText={serviceInfo.bitcoindBlocks.toString()}>Blocks</SettingsItem>
-                                                    <SettingsItem optionalText={serviceInfo.bitcoindHeaders.toString()}>Headers</SettingsItem>
+                                                    {/* <SettingsItem optionalText={baseInfo.bitcoindVersion}>Version</SettingsItem> */}
+                                                    {/* <SettingsItem optionalText={baseInfo.isBitcoindListening ? 'Listening' : 'Offline'}>Status</SettingsItem> */}
+                                                    {/* <SettingsItem optionalText={serviceInfo.bitcoindBlocks.toString()}>Blocks</SettingsItem> */}
+                                                    {/* <SettingsItem optionalText={serviceInfo.bitcoindHeaders.toString()}>Headers</SettingsItem> */}
                                                 </div>
                                             </div>
                                             <div className="column column-1-3">
@@ -123,8 +123,8 @@ class BaseSettings extends Component<Props, State> {
                                                     </div>
                                                 </div>
                                                 <div className="box slim divide">
-                                                    <SettingsItem optionalText={baseInfo.lightningdVersion}>Version</SettingsItem>
-                                                    <SettingsItem optionalText={serviceInfo.lightningdBlocks.toString()}>Blocks</SettingsItem>
+                                                    {/* <SettingsItem optionalText={baseInfo.lightningdVersion}>Version</SettingsItem> */}
+                                                    {/* <SettingsItem optionalText={serviceInfo.lightningdBlocks.toString()}>Blocks</SettingsItem> */}
                                                 </div>
                                                 <div className={['subHeaderContainer', style.lastSubheader].join(' ')}>
                                                     <div className="subHeader">
@@ -132,8 +132,8 @@ class BaseSettings extends Component<Props, State> {
                                                     </div>
                                                 </div>
                                                 <div className="box slim divide">
-                                                    <SettingsItem optionalText={baseInfo.electrsVersion}>Version</SettingsItem>
-                                                    <SettingsItem optionalText={serviceInfo.electrsBlocks.toString()}>Blocks</SettingsItem>
+                                                    {/* <SettingsItem optionalText={baseInfo.electrsVersion}>Version</SettingsItem> */}
+                                                    {/* <SettingsItem optionalText={serviceInfo.electrsBlocks.toString()}>Blocks</SettingsItem> */}
                                                 </div>
                                             </div>
                                         </div>
