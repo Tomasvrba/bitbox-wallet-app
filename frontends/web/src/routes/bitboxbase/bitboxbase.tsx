@@ -36,6 +36,7 @@ import * as style from './bitboxbase.css';
 
 export interface BitBoxBaseProps {
     bitboxBaseID: string | null;
+    setTmpBaseGlobalStatus: (IP: string, status: BaseStatus) => void;
 }
 
 export interface BitBoxBaseInfo {
@@ -97,19 +98,15 @@ enum NetworkOptions {
     ClearnetIBD = 'enable-clearnet-ibd',
 }
 
+export type BaseStatus = '' | 'connected' | 'unpaired' | 'pairingFailed' | 'passwordNotSet' | 'bitcoinPre' |
+'locked' | 'initialized' | 'disconnected' | 'offline' | 'reconnecting';
+
 interface State {
     baseInfo?: BitBoxBaseInfo;
     serviceInfo?: BitBoxBaseServiceInfo;
     bitboxBaseID: string | null;
     bitboxBaseVerified: boolean;
-    status: '' |
-    'connected' |
-    'unpaired' |
-    'pairingFailed' |
-    'passwordNotSet' |
-    'bitcoinPre' |
-    'locked' |
-    'initialized';
+    status: BaseStatus;
     hash?: string;
     showWizard: boolean;
     activeStep?: ActiveStep;
@@ -211,6 +208,9 @@ class BitBoxBase extends Component<Props, State> {
             this.setState({
                 status,
             });
+            if (this.props.bitboxBaseID) {
+                this.props.setTmpBaseGlobalStatus(this.props.bitboxBaseID, status);
+            }
             // check if the base middleware password has been set yet
             switch (this.state.status) {
                 case 'passwordNotSet':
@@ -234,6 +234,7 @@ class BitBoxBase extends Component<Props, State> {
                     this.getServiceInfo();
                     break;
                 default:
+                    console.log(this.state.status);
                     break;
             }
         });
@@ -411,6 +412,7 @@ class BitBoxBase extends Component<Props, State> {
             serviceInfo,
             updateAvailable,
             updateInfo,
+            status,
         }: State,
     ) {
         // TODO: Move wizard to basewizard.tsx and refactor
@@ -431,7 +433,8 @@ class BitBoxBase extends Component<Props, State> {
                         connectElectrum={this.connectElectrum}
                         apiPrefix={this.apiPrefix()}
                         updateAvailable={updateAvailable}
-                        updateInfo={updateInfo} />
+                        updateInfo={updateInfo}
+                        status={status} />
                 );
             }
             return (

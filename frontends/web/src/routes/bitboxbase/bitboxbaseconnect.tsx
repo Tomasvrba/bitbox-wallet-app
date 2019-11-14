@@ -16,6 +16,7 @@
 
 import { Component, h, RenderableProps } from 'preact';
 import { route } from 'preact-router';
+import { TmpBaseState } from '../../app';
 import { alertUser } from '../../components/alert/Alert';
 import * as style from '../../components/bitboxbase/bitboxbase.css';
 import { DetectedBase } from '../../components/bitboxbase/detectedbase';
@@ -30,6 +31,7 @@ import { apiPost } from '../../utils/request';
 interface BitBoxBaseConnectProps {
     bitboxBaseIDs: string[];
     detectedBases: DetectedBitBoxBases;
+    tmpBaseStates: TmpBaseState;
 }
 
 export interface DetectedBitBoxBases {
@@ -52,6 +54,10 @@ class BitBoxBaseConnect extends Component<Props, State> {
             manualConnectDialog: false,
             ipEntry: undefined,
         };
+    }
+
+    public componentDidMount() {
+        console.log(this.props.tmpBaseStates);
     }
 
     private handleFormChange = event => {
@@ -102,6 +108,7 @@ class BitBoxBaseConnect extends Component<Props, State> {
             t,
             detectedBases,
             bitboxBaseIDs,
+            tmpBaseStates,
         }: RenderableProps<Props>,
         {
             manualConnectDialog,
@@ -186,7 +193,14 @@ class BitBoxBaseConnect extends Component<Props, State> {
                                                     Object.values(detectedBases).includes(baseID) ? name = Object.keys(detectedBases).find(key => detectedBases[key] === baseID) :
                                                         // FIXME: Resolve a hostname from IP for manual additions
                                                         name = t('bitboxBase.new');
-                                                    return <SettingsButton link href={`/bitboxbase/${baseID}`} secondaryText={baseID}>{name}</SettingsButton>;
+                                                    let status: string;
+                                                    tmpBaseStates[baseID] ? status = tmpBaseStates[baseID] : status = 'Uninitialized';
+                                                    return <SettingsButton
+                                                            link href={`/bitboxbase/${baseID}`}
+                                                            secondaryText={baseID}
+                                                            optionalText={status[0].toUpperCase() + status.slice(1).toLocaleLowerCase()}>
+                                                            {name}
+                                                            </SettingsButton>;
                                                 }) : (
                                                     <p className="text-center p-top-half p-bottom-half">{t('bitboxBase.detectedBasesEmpty')}</p>
                                                 )

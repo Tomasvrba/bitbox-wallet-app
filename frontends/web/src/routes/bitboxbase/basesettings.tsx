@@ -26,7 +26,7 @@ import * as spinnerStyle from '../../components/spinner/Spinner.css';
 import { translate, TranslateProps } from '../../decorators/translate';
 import { apiSubscribe } from '../../utils/event';
 import { apiGet, apiPost } from '../../utils/request';
-import { BaseUpdateInfo, BitBoxBaseInfo, BitBoxBaseServiceInfo } from './bitboxbase';
+import { BaseStatus, BaseUpdateInfo, BitBoxBaseInfo, BitBoxBaseServiceInfo } from './bitboxbase';
 import * as style from './bitboxbase.css';
 import { updateStatus } from './bitboxbase.css';
 
@@ -39,6 +39,7 @@ interface SettingsProps {
     apiPrefix: string;
     updateAvailable?: boolean;
     updateInfo?: BaseUpdateInfo;
+    status: BaseStatus;
 }
 
 enum UpdateState {
@@ -136,6 +137,7 @@ class BaseSettings extends Component<Props, State> {
             updateInfo,
             updateAvailable,
             apiPrefix,
+            status,
         }: RenderableProps<Props>,
         {
             expandedDashboard,
@@ -157,7 +159,7 @@ class BaseSettings extends Component<Props, State> {
                                         <div>
                                         <span className="m-left-quarter text-black"><span className={[style.statusBadge, style.large, style.online].join(' ')}>
                                             {/* </span>{baseInfo.status}</span> */}
-                                            </span>Online</span>
+                                            </span>{status[0].toUpperCase() + status.slice(1).toLocaleLowerCase()}</span>
                                         </div>
                                 </div>
                                 <div className={style.items}>

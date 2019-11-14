@@ -32,7 +32,7 @@ import Info from './routes/account/info/info';
 import Receive from './routes/account/receive/receive';
 import { Send } from './routes/account/send/send';
 import { InitializeAllAccounts } from './routes/account/summary/initializeall';
-import { BitBoxBase } from './routes/bitboxbase/bitboxbase';
+import { BaseStatus, BitBoxBase } from './routes/bitboxbase/bitboxbase';
 import { BitBoxBaseConnect, DetectedBitBoxBases } from './routes/bitboxbase/bitboxbaseconnect';
 import { Devices, DeviceSwitch } from './routes/device/deviceswitch';
 import ManageBackups from './routes/device/manage-backups/manage-backups';
@@ -48,6 +48,11 @@ interface State {
     devices: Devices;
     detectedBases: DetectedBitBoxBases;
     bitboxBaseIDs: string[];
+    tmpBaseStates: TmpBaseState;
+}
+
+export interface TmpBaseState {
+    [IP: string]: BaseStatus;
 }
 
 type Props = TranslateProps;
@@ -60,7 +65,13 @@ class App extends Component<Props, State> {
         devices: {},
         detectedBases: {},
         bitboxBaseIDs: [],
+        tmpBaseStates: {},
     };
+
+    private setTmpStatus = (IP: string, status: BaseStatus) => {
+        const newStatuses = Object.assign({}, this.state.tmpBaseStates, {[IP]: status});
+        this.setState({ tmpBaseStates: newStatuses });
+    }
 
     private unsubscribe!: () => void;
 
@@ -175,7 +186,7 @@ class App extends Component<Props, State> {
 
     public render(
         {}: RenderableProps<Props>,
-        { accounts, devices, deviceIDs, bitboxBaseIDs, accountsInitialized, detectedBases }: State,
+        { accounts, devices, deviceIDs, bitboxBaseIDs, accountsInitialized, detectedBases, tmpBaseStates }: State,
     ) {
         return (
             <div className={['app', i18nEditorActive ? 'i18nEditor' : ''].join(' ')}>
@@ -213,10 +224,12 @@ class App extends Component<Props, State> {
                         <BitBoxBaseConnect
                           path="/bitboxbase"
                           detectedBases={detectedBases}
-                          bitboxBaseIDs={bitboxBaseIDs} />
+                          bitboxBaseIDs={bitboxBaseIDs}
+                          tmpBaseStates={tmpBaseStates} />
                         <BitBoxBase
                           path="/bitboxbase/:bitboxBaseID"
-                          bitboxBaseID={null} />
+                          bitboxBaseID={null}
+                          setTmpBaseGlobalStatus={this.setTmpStatus} />
                         <ElectrumSettings
                             path="/settings/electrum" />
                         <Settings
