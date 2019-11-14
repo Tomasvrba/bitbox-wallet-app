@@ -16,6 +16,7 @@
 package mdns
 
 import (
+	"fmt"
 	"net"
 	"reflect"
 	"strconv"
@@ -25,7 +26,6 @@ import (
 
 	"github.com/digitalbitbox/bitbox-wallet-app/backend/bitboxbase"
 	"github.com/digitalbitbox/bitbox-wallet-app/backend/config"
-	"github.com/digitalbitbox/bitbox-wallet-app/util/errp"
 	"github.com/digitalbitbox/bitbox-wallet-app/util/logging"
 	"github.com/digitalbitbox/bitbox-wallet-app/util/socksproxy"
 
@@ -86,7 +86,7 @@ func NewManager(
 	}
 }
 
-// TryMakeNewBase attempts to create a new bitboxBase connection to the BitBox base. Returns true if successful, false otherwise.
+// TryMakeNewBase attempts to create a new bitboxBase connection to the BitBoxBase. Returns true if successful, false otherwise.
 func (manager *Manager) TryMakeNewBase(address string) (bool, error) {
 	for bitboxBaseID, bitboxBase := range manager.baseDeviceInterface {
 		// Check if bitboxbase was removed.
@@ -103,12 +103,12 @@ func (manager *Manager) TryMakeNewBase(address string) (bool, error) {
 	bitboxBaseID := address
 
 	// Skip if already registered.
-	if _, ok := manager.baseDeviceInterface[bitboxBaseID]; ok {
-		return false, errp.New("Base already registered")
-	}
+	// if _, ok := manager.baseDeviceInterface[bitboxBaseID]; ok {
+	// 	return false, errp.New("Base already registered")
+	// }
 
 	manager.log.WithField("host", manager.detectedBases[address]).WithField("address", address)
-	baseDevice, err := bitboxbase.NewBitBoxBase(address, bitboxBaseID, manager.config, manager.bitboxBaseConfigDir, manager.onUnregister, manager.socksProxy)
+	baseDevice, err := bitboxbase.NewBitBoxBase(address, bitboxBaseID, manager.config, manager.bitboxBaseConfigDir, manager.onUnregister, manager.socksProxy, manager.TryMakeNewBase)
 
 	if err != nil {
 		manager.log.WithError(err).Error("Failed to register Base")
@@ -123,6 +123,10 @@ func (manager *Manager) TryMakeNewBase(address string) (bool, error) {
 
 	if err = baseDevice.ConnectRPCClient(); err != nil {
 		return false, err
+	}
+
+	for k := range manager.baseDeviceInterface {
+		fmt.Println("\nTryMakeNewBase:", k)
 	}
 	return true, nil
 }

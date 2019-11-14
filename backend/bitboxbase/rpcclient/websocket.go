@@ -55,7 +55,8 @@ func (rpcClient *RPCClient) runWebsocket(client *websocket.Conn, writeChan <-cha
 				rpcClient.log.WithError(err).Error("failed to close websocket client")
 			}
 			// it might be the case that we are closing the websocket on an already de-regitstered base, so do not check the errors here.
-			_ = rpcClient.onUnregister()
+			// _ = rpcClient.onUnregister()
+			rpcClient.log.Println("\n\nNOT Deregistering")
 			rpcClient.log.Println("Closing websocket read loop")
 		}()
 		client.SetReadLimit(maxMessageSize)

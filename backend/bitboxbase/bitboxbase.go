@@ -65,7 +65,12 @@ type Interface interface {
 
 	// Deregister calls the backend's BitBoxBase Deregister callback and sends a notification to the frontend, if bitboxbase is active.
 	// If bitboxbase is not active, an error is returned.
+	// Deregister should only be used if we want to completely remove the Base from the backend,
+	// otherwise use Disconnect
 	Deregister() error
+
+	// Disconnect changes the Base status and takes appropriate action based on DisconnectType
+	Disconnect(DisconnectType) error
 
 	// ReindexBitcoin starts a bitcoin reindex on the base.
 	ReindexBitcoin() error
@@ -150,6 +155,21 @@ const (
 	SyncOptionInitialBlockDownload SyncOption = "initialBlockDownload"
 )
 
+// DisconnectType indicates the type of disconnect that should be passed to Disconnect() to determine if we set the Base
+// status to 'offline' or 'reconnecting' which determines subsequent behavior of the backend
+type DisconnectType int
+
+// DisconnectType currently has three possibilities, reboot, shutdown and disconnect
+// DisconnectTypeReboot changes status to StatusReconnecting to tell the backend to attempt to reconnect
+// DisconnectTypeShutdown changes status StatusOffline
+// DisconnectTypeDisconnect changes status StatusDisconnected to indicate that the Base if online, but not connected to
+// the App backend
+const (
+	DisconnectTypeReboot     DisconnectType = 0
+	DisconnectTypeShutdown   DisconnectType = 1
+	DisconnectTypeDisconnect DisconnectType = 2
+)
+
 // BitBoxBase provides the dictated bitboxbase api to communicate with the base
 type BitBoxBase struct {
 	observable.Implementation
@@ -166,8 +186,9 @@ type BitBoxBase struct {
 	status              bitboxbasestatus.Status
 	active              bool //this indicates if the bitboxbase is in use, or being disconnected
 
-	onUnregister func(string)
-	socksProxy   socksproxy.SocksProxy
+	onUnregister   func(string)
+	socksProxy     socksproxy.SocksProxy
+	tryMakeNewBase func(string) (bool, error)
 }
 
 //NewBitBoxBase creates a new bitboxBase instance
@@ -176,7 +197,8 @@ func NewBitBoxBase(address string,
 	config *config.Config,
 	bitboxBaseConfigDir string,
 	onUnregister func(string),
-	socksProxy socksproxy.SocksProxy) (*BitBoxBase, error) {
+	socksProxy socksproxy.SocksProxy,
+	tryMakeNewBase func(string) (bool, error)) (*BitBoxBase, error) {
 	bitboxBase := &BitBoxBase{
 		log:                 logging.Get().WithGroup("bitboxbase"),
 		bitboxBaseID:        id,
@@ -188,6 +210,7 @@ func NewBitBoxBase(address string,
 		onUnregister:        onUnregister,
 		active:              false,
 		socksProxy:          socksProxy,
+		tryMakeNewBase:		 tryMakeNewBase,
 	}
 	rpcClient, err := rpcclient.NewRPCClient(address, bitboxBaseConfigDir, bitboxBase.changeStatus, bitboxBase.fireEvent, bitboxBase.Deregister)
 	bitboxBase.rpcClient = rpcClient
@@ -264,6 +287,28 @@ func (base *BitBoxBase) Deregister() error {
 	base.fireEvent("disconnect")
 	base.onUnregister(base.bitboxBaseID)
 	base.active = false
+	return nil
+}
+
+// Disconnect changes the Base status and takes appropriate action based on DisconnectType
+func (base *BitBoxBase) Disconnect(disconnectType DisconnectType) error {
+	if !base.active {
+		return errp.New("Attempted call to non-active base")
+	}
+	base.Close()
+	base.active = false
+	switch disconnectType {
+	case DisconnectTypeReboot:
+		base.changeStatus(bitboxbasestatus.StatusReconnecting)
+		fmt.Println("\n\nDisconnecting with DisconnectTypeReboot, will attempt reconnect")
+		go base.attemptReconnectLoop()
+	case DisconnectTypeShutdown:
+		base.changeStatus(bitboxbasestatus.StatusOffline)
+		fmt.Println("\n\nDisconnecting with DisconnectTypeShutdown, status offline")
+	case DisconnectTypeDisconnect:
+		base.changeStatus(bitboxbasestatus.StatusDisconnected)
+		fmt.Println("\n\nDisconnecting with DisconnectTypeDisconnect, status disconnected")
+	}
 	return nil
 }
 
@@ -595,6 +640,10 @@ func (base *BitBoxBase) ShutdownBase() error {
 	if !reply.Success {
 		return &reply
 	}
+	err = base.Disconnect(DisconnectTypeShutdown)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -611,7 +660,7 @@ func (base *BitBoxBase) RebootBase() error {
 	if !reply.Success {
 		return &reply
 	}
-	err = base.Deregister()
+	err = base.Disconnect(DisconnectTypeReboot)
 	if err != nil {
 		return err
 	}
@@ -630,6 +679,10 @@ func (base *BitBoxBase) UpdateBase(args rpcmessages.UpdateBaseArgs) error {
 	}
 	if !reply.Success {
 		return &reply
+	}
+	err = base.Disconnect(DisconnectTypeReboot)
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -718,4 +771,35 @@ func (base *BitBoxBase) Close() {
 // Ping sends a get requset to the bitbox base middleware root handler and returns true if successful
 func (base *BitBoxBase) Ping() (bool, error) {
 	return base.rpcClient.Ping()
+}
+
+// attemptReconnectLoop attempts to reconnect to a rebooting base
+func (base *BitBoxBase) attemptReconnectLoop() error {
+	fmt.Println("Entering attemptReconnectLoop")
+	fmt.Println("Waiting")
+	time.Sleep(15 * time.Second)
+	fmt.Println("Waking up")
+	for {
+		fmt.Println("Entering attemptReconnectLoop for loop")
+		reply, err := base.Ping()
+		if err != nil {
+			base.log.Println("attemptReconnectLoop error: ", err)
+		}
+		if reply {
+			// err := base.ConnectRPCClient()
+			// backend.TryMakeNewBase(base.Identifier())
+			base.tryMakeNewBase(base.Identifier())
+			if err != nil {
+				base.log.Println("Could not re-establish connection: ", err)
+			}
+			base.active = true
+			base.changeStatus(bitboxbasestatus.StatusConnected)
+			base.log.Println("\n\nReconnected successfully")
+			break
+		}
+		fmt.Println("\n\nReconencting")
+		time.Sleep(5 * time.Second)
+	}
+	fmt.Println("returning attemptReconnectLoop")
+	return nil
 }
