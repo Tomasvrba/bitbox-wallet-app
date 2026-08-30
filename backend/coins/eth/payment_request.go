@@ -147,9 +147,9 @@ func parsePaymentRequestAtomicAmount(value string) (coinpkg.Amount, bool) {
 		return coinpkg.NewAmountFromInt64(0), true
 	}
 	trailingZeros := exponent - uint64(len(fraction))
-	// Bound the exponent before passing the untrusted value to the amount parser. A non-zero
-	// uint256 cannot have more than 77 trailing decimal zeros.
-	if trailingZeros > 77 {
+	// Bound the input before passing the untrusted value to the amount parser. A non-zero uint256
+	// has at most 78 decimal digits and cannot have more than 77 trailing decimal zeros.
+	if trailingZeros > 77 || len(significantDigits) > 78-int(trailingZeros) {
 		return coinpkg.Amount{}, false
 	}
 	atomicAmount, err := coinpkg.NewAmountFromString(value, big.NewInt(1))
