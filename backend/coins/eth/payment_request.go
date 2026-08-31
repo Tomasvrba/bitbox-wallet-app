@@ -152,7 +152,11 @@ func parsePaymentRequestAtomicAmount(value string) (coinpkg.Amount, bool) {
 	if trailingZeros > 77 || len(significantDigits) > 78-int(trailingZeros) {
 		return coinpkg.Amount{}, false
 	}
-	atomicAmount, err := coinpkg.NewAmountFromString(value, big.NewInt(1))
+	boundedAmountString := significantDigits
+	if trailingZeros > 0 {
+		boundedAmountString += "e" + strconv.FormatUint(trailingZeros, 10)
+	}
+	atomicAmount, err := coinpkg.NewAmountFromString(boundedAmountString, big.NewInt(1))
 	if err != nil || atomicAmount.BigInt().BitLen() > 256 {
 		return coinpkg.Amount{}, false
 	}
