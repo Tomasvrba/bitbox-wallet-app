@@ -850,8 +850,9 @@ outerLoop:
 				},
 			})
 		}
+		// Re-read after notifying observers, as a keystore may have connected in the meantime.
 		ks, err = backend.connectKeystore.connect(
-			currentKeystore,
+			backend.Keystore(),
 			rootFingerprint,
 			timeout,
 		)
