@@ -370,6 +370,11 @@ func TestSignTransactionUntrackedBroadcastResult(t *testing.T) {
 			expectedCause: ErrBroadcastUncertain,
 		},
 		{
+			name:          "sequencer hand-over failure is uncertain",
+			sendErr:       rpcclient.RPCError{Code: -32000, Message: "context deadline exceeded"},
+			expectedCause: ErrBroadcastUncertain,
+		},
+		{
 			name:          "request rejected before submission",
 			sendErr:       requestRejected,
 			expectedCause: rpcclient.ErrRequestRejected,

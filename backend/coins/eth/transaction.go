@@ -152,7 +152,15 @@ func sendUntrackedTransaction(client rpcclient.Interface, transaction *types.Tra
 	if known, _, lookupErr := client.TransactionByHash(context.TODO(), transaction.Hash()); lookupErr == nil && known != nil {
 		return nil
 	}
-	if rpcErr.Rejected() || errp.Cause(err) == rpcclient.ErrRequestRejected {
+	rejected := rpcErr.Rejected()
+	if rpcErr.Code == -32000 {
+		// Rollup nodes also return this code when passing the transaction to the sequencer fails
+		// or times out. Only these messages prove a rejection.
+		rejected = slices.ContainsFunc(
+			[]string{"insufficient funds", "nonce too low", "underpriced", "intrinsic gas too low"},
+			func(message string) bool { return strings.Contains(rpcErr.Message, message) })
+	}
+	if rejected || errp.Cause(err) == rpcclient.ErrRequestRejected {
 		return err
 	}
 	return errp.WithMessage(ErrBroadcastUncertain, err.Error())
