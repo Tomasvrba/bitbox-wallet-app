@@ -550,6 +550,7 @@ export type TSignWalletConnectTx = {
   aborted?: boolean;
   errorMessage?: string;
   errorCode?: 'firmwareUpgradeRequired' | 'insufficientFunds' | 'broadcastUncertain';
+  txHash?: string;
 } | {
   success: true;
   txHash: string;

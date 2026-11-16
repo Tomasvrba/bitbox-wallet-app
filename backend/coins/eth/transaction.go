@@ -130,6 +130,10 @@ func SignTransaction(
 		} else {
 			err = sendUntrackedTransaction(client, txProposal.Tx)
 		}
+		if errp.Cause(err) == ErrBroadcastUncertain {
+			// The transaction may still confirm, so the caller needs its hash.
+			return txProposal.Tx, errp.WithStack(err)
+		}
 		if err != nil {
 			return nil, errp.WithStack(err)
 		}
