@@ -1089,7 +1089,7 @@ func (backend *Backend) accountLoadableLocked(
 	}
 	// Watch-only accounts are loaded regardless of support reported by the connected keystore. A
 	// mismatch is handled when that keystore is later used for an account operation.
-	if isWatchonly {
+	if isWatchonly && backend.keystore != nil {
 		return accountCoin, true
 	}
 	if backend.keystore == nil {
