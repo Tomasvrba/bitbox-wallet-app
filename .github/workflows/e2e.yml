@@ -1,0 +1,62 @@
+# Copy this file to .github/workflows/e2e.yml in any target repo
+# (bitbox02-firmware, bitbox-wallet-app, bitbox-api-rs, bitbox02-api-go, bitbox-api-ts, Rabby).
+#
+# Set `repo:` below to the repo key (firmware | app | api-rs | api-go | api-ts | rabby).
+# Maintainers trigger a run by checking flow boxes in the PR description and adding the `run-e2e` label.
+# Because `pull_request_target` runs from the base branch and only maintainers can add labels,
+# untrusted fork PRs cannot trigger builds without maintainer review.
+name: e2e
+
+on:
+  pull_request_target:
+    types: [labeled]
+
+permissions: {}
+
+jobs:
+  e2e:
+    if: github.event.label.name == 'run-e2e'
+    permissions:
+      contents: write
+    # Update owner/repo if bitbox-e2e moves to BitBoxSwiss/bitbox-e2e.
+    uses: Tomasvrba/bitbox-e2e/.github/workflows/pr.yml@main
+    with:
+      repo: app  # change per repo: firmware | app | api-rs | api-go | api-ts | rabby
+      base: ${{ github.event.pull_request.base.sha }}
+      head: ${{ github.event.pull_request.head.sha }}
+      head_repo: ${{ github.event.pull_request.head.repo.full_name }}
+      pr_body: ${{ github.event.pull_request.body || '' }}
+    secrets:
+      # Optional: PAT with contents:write on bitbox-e2e to host reports on bitbox-e2e's gh-pages
+      # instead of this repo's gh-pages.
+      pages_token: ${{ secrets.E2E_PAGES_TOKEN }}
+
+  comment:
+    needs: e2e
+    if: ${{ !cancelled() && github.event.label.name == 'run-e2e' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Post summary and clear label
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
+        env:
+          SUMMARY: ${{ needs.e2e.outputs.summary }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const marker = '<!-- bitbox-e2e-report -->';
+            const summary = (process.env.SUMMARY || '### ⚠️ e2e run finished without a summary').trim();
+            const body = `${marker}\n${summary}\n\n[Full run & \`e2e-report\` artifact](${process.env.RUN_URL})`;
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.pull_request.number;
+
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
+            const existing = comments.find((c) => c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
+
+            await github.rest.issues.removeLabel({ owner, repo, issue_number, name: 'run-e2e' }).catch(() => {});
