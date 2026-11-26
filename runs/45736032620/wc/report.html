@@ -1,0 +1,174 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>e2e: WalletConnect: BitBoxApp Tomasvrba/3b6ff88303b67f7ccf55da8203f3bbb00399a089</title><style>
+:root{
+--bg:#111214;--surface:#191b1f;--surface-2:#22252b;--line:#2e323a;--line-strong:#3f4550;
+--fg:#f2f3f5;--fg-2:#c7ccd4;--muted:#8d95a2;--code:#14161a;
+--accent:#4b96ff;--accent-bg:rgba(75,150,255,.14);
+--ok:#36b37e;--ok-bg:rgba(54,179,126,.14);--ok-fg:#7ce0b2;
+--bad:#f06a6a;--bad-bg:rgba(240,106,106,.14);--bad-fg:#ff9d9d;
+--warn:#e3a936;--warn-bg:rgba(227,169,54,.15);--warn-fg:#f6ce74;
+--mono:ui-monospace,SFMono-Regular,"JetBrains Mono",Menlo,monospace
+}
+@media (prefers-color-scheme:light){:root{
+--bg:#f4f5f7;--surface:#ffffff;--surface-2:#f8f9fb;--line:#dfe3ea;--line-strong:#c5ccd7;
+--fg:#15181d;--fg-2:#373f4a;--muted:#5c6574;--code:#eef1f5;
+--accent:#1f6feb;--accent-bg:rgba(31,111,235,.10);
+--ok:#1a7f37;--ok-bg:rgba(26,127,55,.10);--ok-fg:#14682c;
+--bad:#c62828;--bad-bg:rgba(198,40,40,.09);--bad-fg:#a51d1d;
+--warn:#9a6700;--warn-bg:rgba(154,103,0,.11);--warn-fg:#7d5300
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+font:15px/1.55 Inter,system-ui,-apple-system,Segoe UI,sans-serif;-webkit-font-smoothing:antialiased}
+main{max-width:1160px;margin:0 auto;padding:36px 22px 72px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+code,pre{font:13px/1.5 var(--mono);background:var(--code);border-radius:6px}
+code{padding:2px 6px;overflow-wrap:anywhere;border:1px solid var(--line)}
+pre{padding:12px 14px;overflow-x:auto;white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0;
+border:1px solid var(--line);color:var(--fg-2)}
+
+/* Header & hero */
+header{margin-bottom:22px}
+.eyebrow{color:var(--accent);font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
+h1{font-size:30px;line-height:1.18;letter-spacing:-.02em;margin:6px 0 10px}
+.sides-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;color:var(--muted);font-size:13px}
+.sides-bar .arrow{color:var(--accent);font-weight:700}
+.side-chip{background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:4px 11px;color:var(--fg-2)}
+.side-chip b{color:var(--fg);font-weight:600}
+
+.hero{margin:18px 0 22px;padding:20px 22px;border-radius:14px;border:1px solid;
+display:flex;flex-direction:column;gap:14px}
+.hero.fail{background:var(--bad-bg);border-color:var(--bad)}
+.hero.pass{background:var(--ok-bg);border-color:var(--ok)}
+.hero.warn{background:var(--warn-bg);border-color:var(--warn)}
+.hero-top{display:flex;gap:14px;align-items:baseline;justify-content:space-between;flex-wrap:wrap}
+.hero .big{font-size:24px;font-weight:750;letter-spacing:-.015em}
+.hero.fail .big{color:var(--bad-fg)}.hero.pass .big{color:var(--ok-fg)}.hero.warn .big{color:var(--warn-fg)}
+.hero .sub{color:var(--fg-2);font-size:15px}
+
+/* Flow scorecard */
+.scorecard{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.flow-tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.flow-tile.fail{border-color:var(--bad)}.flow-tile.warn{border-color:var(--warn)}
+.flow-tile.changed{border-color:var(--accent)}.flow-tile.pass{border-color:var(--ok)}
+.flow-tile-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.flow-tile-name{font-weight:700;font-size:14px;color:var(--fg)}
+.flow-tile-sub{font-size:13px;color:var(--muted);line-height:1.35;flex:1}
+.flow-tile-foot{font-size:12px;margin-top:2px}
+
+/* Pills & section headers */
+.pill{font:600 11.5px/1 var(--mono);padding:4px 9px;border-radius:99px;display:inline-flex;align-items:center;
+letter-spacing:.02em;white-space:nowrap}
+.pill.bad{background:var(--bad-bg);color:var(--bad-fg);border:1px solid var(--bad)}
+.pill.good{background:var(--ok-bg);color:var(--ok-fg);border:1px solid var(--ok)}
+.pill.warn{background:var(--warn-bg);color:var(--warn-fg);border:1px solid var(--warn)}
+.pill.acc{background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent)}
+.pill.muted{background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+
+h2{font-size:20px;letter-spacing:-.01em;margin:34px 0 6px;display:flex;align-items:center;gap:10px}
+h3{font-size:17px;line-height:1.35;margin:0;letter-spacing:-.01em}
+.sec-sub{color:var(--muted);font-size:14px;margin:0 0 14px}
+.callout{padding:11px 15px;border-left:4px solid var(--warn);background:var(--warn-bg);
+border-radius:8px;margin:10px 0;color:var(--fg)}
+
+/* Finding cards */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+.card.bad{border-left:4px solid var(--bad)}
+.card.chg{border-left:4px solid var(--accent)}
+.card-head{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:6px}
+.card-title-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.card-detail{color:var(--fg-2);margin:6px 0 10px;font-size:14.5px}
+.muted,.where{color:var(--muted);font-size:13.5px;margin:4px 0 8px}
+
+/* Screen text diffs */
+.pairs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.pairs .h{font:700 11px/1 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.screen{background:var(--code);border:1px solid var(--line);border-radius:8px;padding:10px 12px;
+white-space:pre-line;font-size:13.5px}
+.screen.before{border-left:3px solid var(--bad)}.screen.after{border-left:3px solid var(--ok)}
+.screen .kind{font:600 11px/1 var(--mono);color:var(--muted);text-transform:uppercase;margin-bottom:4px}
+.screen .t{font-weight:700;color:var(--fg);margin-bottom:2px}
+.screen .k{color:var(--muted)}
+.absent{color:var(--muted);font-style:italic;padding:14px 10px;border:1px dashed var(--line-strong);
+border-radius:8px;text-align:center;font-size:13px}
+
+/* Visual comparison grids */
+.cmp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0;align-items:start}
+.cmp.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.cmp .h{font:700 11px/1 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.cmp .label{grid-column:1/-1;font-weight:650;font-size:13.5px;color:var(--fg-2);margin-top:6px}
+.cmp img{width:100%;height:auto;display:block;border-radius:8px;border:2px solid var(--line-strong);
+image-rendering:pixelated;background:#000}
+.cmp img.photo{image-rendering:auto;border-width:1px;background:var(--code)}
+.cmp img.after-ok{border-color:var(--ok)}.cmp img.diff-hit{border-color:var(--bad)}
+
+/* Passing proof filmstrip */
+.filmstrip{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;
+margin:12px 0;align-items:start}
+.filmstrip figure{margin:0;display:flex;flex-direction:column;gap:6px;background:var(--surface-2);
+border:1px solid var(--line);border-radius:9px;padding:8px}
+.filmstrip figcaption{font-size:12.5px;color:var(--fg-2);overflow-wrap:anywhere}
+.filmstrip img{width:100%;height:auto;display:block;border-radius:6px;border:1px solid var(--line-strong);
+image-rendering:pixelated;background:#000}
+.filmstrip img.photo{image-rendering:auto;background:var(--code)}
+
+/* Collapsible reference drawers */
+details{margin:10px 0;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:8px 14px}
+details[open]{padding-bottom:12px}
+summary{cursor:pointer;font-weight:600;font-size:14px;color:var(--fg);list-style:none;
+display:flex;align-items:center;gap:8px}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸";color:var(--accent);font-size:12px;transition:transform .15s}
+details[open]>summary::before{transform:rotate(90deg)}
+details>div{padding:8px 0 0}
+.card details{background:var(--code);margin:10px 0 0}
+.ref-section{margin-top:34px;padding-top:18px;border-top:1px solid var(--line)}
+
+table{border-collapse:collapse;font-size:13.5px;margin:8px 0;width:100%;display:block;overflow-x:auto}
+td,th{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--surface);color:var(--fg);font-weight:650}
+ul{padding-left:20px;margin:6px 0}li{margin:4px 0;color:var(--fg-2)}
+@media (max-width:680px){
+  main{padding:20px 14px 48px}
+  h1{font-size:23px}
+  .pairs,.cmp,.cmp.two{grid-template-columns:1fr}
+  .screen{font-size:12.5px;padding:8px}
+}
+</style>
+<main><header>
+<div class="eyebrow">BitBox e2e · BitBoxSwiss/bitbox-wallet-app</div>
+<h1>WalletConnect: BitBoxApp Tomasvrba/3b6ff88303b67f7ccf55da8203f3bbb00399a089</h1>
+<div class="sides-bar"><span class="side-chip"><b>Before</b> BitBoxApp <code>132a8af18</code>, where the PR branched off</span><span class="arrow">→</span><span class="side-chip"><b>After</b> BitBoxApp <code>Tomasvrba/3b6ff88303b67f7ccf55da8203f3bbb00399a089</code></span></div>
+</header>
+<section class="hero fail"><div class="hero-top"><div class="big">Broke 4 tests</div><div class="sub">No device screen changed</div></div>
+</section>
+<h2>What broke <span class="pill bad">4 regressions</span></h2><p class="sec-sub">Passed before this PR and fails with it. Expand trace blocks for raw test output.</p>
+<article class="card bad"><div class="card-head"><h3>WalletConnect request <code>eth_sendTransaction</code> on Sepolia (<code>send-tx-sepolia</code>) fails</h3></div>
+<p class="card-detail">Before this PR the dapp got: sent from the right account. With it: error -32000 Transaction submission is uncertain and may still confirm. Check its status before sending again. Requests of the app to the Etherscan proxy that fail only with this PR: POST eth_sendRawTransaction (chain only in the body): Missing or unsupported chainid parameter (required for v2 api) (2 times); POST eth_estimateGas (chain only in the body): Missing or unsupported chainid parameter (required for v2 api).</p>
+<div class="cmp two"><div class="label">App: result</div><div class="h">Before</div><div class="h">After</div><a href="base/app/12-send-tx-sepolia-result.png" target="_blank"><img src="base/app/12-send-tx-sepolia-result.png" alt="before" class="photo" loading="lazy"></a><a href="head/app/12-send-tx-sepolia-result.png" target="_blank"><img src="head/app/12-send-tx-sepolia-result.png" alt="after" class="photo" loading="lazy"></a></div>
+</article>
+<article class="card bad"><div class="card-head"><h3>WalletConnect request <code>eth_sendTransaction</code> on Sepolia (<code>send-tx-sepolia-large</code>) fails</h3></div>
+<p class="card-detail">Before this PR the dapp got: sent from the right account. With it: error -32000 Request failed. Requests of the app to the Etherscan proxy that fail only with this PR: POST eth_sendRawTransaction (chain only in the body): Missing or unsupported chainid parameter (required for v2 api) (2 times); POST eth_estimateGas (chain only in the body): Missing or unsupported chainid parameter (required for v2 api).</p>
+<div class="cmp two"><div class="label">Removed</div><div class="h">Before</div><div class="h">After</div><a href="base/device/44-send-tx-sepolia-large.png" target="_blank"><img src="base/device/44-send-tx-sepolia-large.png" alt="before" loading="lazy"></a><div class="absent">none</div><div class="label">Removed</div><a href="base/device/45-send-tx-sepolia-large.png" target="_blank"><img src="base/device/45-send-tx-sepolia-large.png" alt="before" loading="lazy"></a><div class="absent">none</div><div class="label">Removed</div><a href="base/device/46-send-tx-sepolia-large.png" target="_blank"><img src="base/device/46-send-tx-sepolia-large.png" alt="before" loading="lazy"></a><div class="absent">none</div><div class="label">Removed</div><a href="base/device/47-send-tx-sepolia-large.png" target="_blank"><img src="base/device/47-send-tx-sepolia-large.png" alt="before" loading="lazy"></a><div class="absent">none</div><div class="label">Removed</div><a href="base/device/48-send-tx-sepolia-large.png" target="_blank"><img src="base/device/48-send-tx-sepolia-large.png" alt="before" loading="lazy"></a><div class="absent">none</div><div class="label">Removed</div><a href="base/device/49-send-tx-sepolia-large.png" target="_blank"><img src="base/device/49-send-tx-sepolia-large.png" alt="before" loading="lazy"></a><div class="absent">none</div><div class="label">Removed</div><a href="base/device/50-send-tx-sepolia-large.png" target="_blank"><img src="base/device/50-send-tx-sepolia-large.png" alt="before" loading="lazy"></a><div class="absent">none</div><div class="label">Removed</div><a href="base/device/51-send-tx-sepolia-large.png" target="_blank"><img src="base/device/51-send-tx-sepolia-large.png" alt="before" loading="lazy"></a><div class="absent">none</div><div class="label">App: request</div><a href="base/app/13-send-tx-sepolia-large-request.png" target="_blank"><img src="base/app/13-send-tx-sepolia-large-request.png" alt="before" class="photo" loading="lazy"></a><a href="head/app/13-send-tx-sepolia-large-request.png" target="_blank"><img src="head/app/13-send-tx-sepolia-large-request.png" alt="after" class="photo" loading="lazy"></a><div class="label">App: result</div><a href="base/app/14-send-tx-sepolia-large-result.png" target="_blank"><img src="base/app/14-send-tx-sepolia-large-result.png" alt="before" class="photo" loading="lazy"></a><a href="head/app/14-send-tx-sepolia-large-result.png" target="_blank"><img src="head/app/14-send-tx-sepolia-large-result.png" alt="after" class="photo" loading="lazy"></a></div>
+</article>
+<article class="card bad"><div class="card-head"><h3>WalletConnect request <code>eth_sendTransaction</code> on Arbitrum One (<code>send-tx-arbitrum</code>) fails</h3></div>
+<p class="card-detail">Before this PR the dapp got: sent from the right account. With it: error -32000 Transaction submission is uncertain and may still confirm. Check its status before sending again. Requests of the app to the Etherscan proxy that fail only with this PR: POST eth_sendRawTransaction (chain only in the body): Missing or unsupported chainid parameter (required for v2 api).</p>
+<div class="cmp two"><div class="label">App: request</div><div class="h">Before</div><div class="h">After</div><a href="base/app/15-send-tx-arbitrum-request.png" target="_blank"><img src="base/app/15-send-tx-arbitrum-request.png" alt="before" class="photo" loading="lazy"></a><a href="head/app/15-send-tx-arbitrum-request.png" target="_blank"><img src="head/app/15-send-tx-arbitrum-request.png" alt="after" class="photo" loading="lazy"></a><div class="label">App: result</div><a href="base/app/16-send-tx-arbitrum-result.png" target="_blank"><img src="base/app/16-send-tx-arbitrum-result.png" alt="before" class="photo" loading="lazy"></a><a href="head/app/16-send-tx-arbitrum-result.png" target="_blank"><img src="head/app/16-send-tx-arbitrum-result.png" alt="after" class="photo" loading="lazy"></a></div>
+</article>
+<article class="card bad"><div class="card-head"><h3>WalletConnect request <code>eth_sendTransaction</code> on Polygon (<code>send-tx-polygon</code>) fails</h3></div>
+<p class="card-detail">Before this PR the dapp got: sent from the right account. With it: error -32000 Transaction submission is uncertain and may still confirm. Check its status before sending again. Requests of the app to the Etherscan proxy that fail only with this PR: POST eth_sendRawTransaction (chain only in the body): Missing or unsupported chainid parameter (required for v2 api).</p>
+<div class="cmp two"><div class="label">App: request</div><div class="h">Before</div><div class="h">After</div><a href="base/app/17-send-tx-polygon-request.png" target="_blank"><img src="base/app/17-send-tx-polygon-request.png" alt="before" class="photo" loading="lazy"></a><a href="head/app/17-send-tx-polygon-request.png" target="_blank"><img src="head/app/17-send-tx-polygon-request.png" alt="after" class="photo" loading="lazy"></a><div class="label">App: result</div><a href="base/app/18-send-tx-polygon-result.png" target="_blank"><img src="base/app/18-send-tx-polygon-result.png" alt="before" class="photo" loading="lazy"></a><a href="head/app/18-send-tx-polygon-result.png" target="_blank"><img src="head/app/18-send-tx-polygon-result.png" alt="after" class="photo" loading="lazy"></a></div>
+</article>
+<h2>What changed on the device <span class="pill good">No changes</span></h2><p class="sec-sub">No device screen is different with this PR.</p>
+<details><summary>Proof: screens and screenshots from passing flows (5)</summary><div>
+<article class="card"><div class="card-head"><h3><code>pairing</code></h3></div><div class="filmstrip"><figure><a href="head/app/00-pairing-dashboard.png" target="_blank"><img src="head/app/00-pairing-dashboard.png" alt="App: dashboard" class="photo" loading="lazy"></a><figcaption>App: dashboard</figcaption></figure><figure><a href="head/app/01-pairing-proposal.png" target="_blank"><img src="head/app/01-pairing-proposal.png" alt="App: proposal" class="photo" loading="lazy"></a><figcaption>App: proposal</figcaption></figure><figure><a href="head/app/02-pairing-paired.png" target="_blank"><img src="head/app/02-pairing-paired.png" alt="App: paired" class="photo" loading="lazy"></a><figcaption>App: paired</figcaption></figure></div></article>
+<article class="card"><div class="card-head"><h3><code>personal_sign</code> on Sepolia (<code>personal-sign-sepolia</code>)</h3></div><div class="filmstrip"><figure><a href="head/app/03-personal-sign-sepolia-request.png" target="_blank"><img src="head/app/03-personal-sign-sepolia-request.png" alt="App: request" class="photo" loading="lazy"></a><figcaption>App: request</figcaption></figure><figure><a href="head/app/04-personal-sign-sepolia-result.png" target="_blank"><img src="head/app/04-personal-sign-sepolia-result.png" alt="App: result" class="photo" loading="lazy"></a><figcaption>App: result</figcaption></figure><figure><a href="head/device/05-personal-sign-sepolia.png" target="_blank"><img src="head/device/05-personal-sign-sepolia.png" alt="Device #1" loading="lazy"></a><figcaption>Device #1</figcaption></figure><figure><a href="head/device/06-personal-sign-sepolia.png" target="_blank"><img src="head/device/06-personal-sign-sepolia.png" alt="Device #2" loading="lazy"></a><figcaption>Device #2</figcaption></figure></div></article>
+<article class="card"><div class="card-head"><h3><code>eth_signTypedData_v4</code> on Sepolia (<code>typed-data-sepolia</code>)</h3></div><div class="filmstrip"><figure><a href="head/app/05-typed-data-sepolia-request.png" target="_blank"><img src="head/app/05-typed-data-sepolia-request.png" alt="App: request" class="photo" loading="lazy"></a><figcaption>App: request</figcaption></figure><figure><a href="head/app/06-typed-data-sepolia-result.png" target="_blank"><img src="head/app/06-typed-data-sepolia-result.png" alt="App: result" class="photo" loading="lazy"></a><figcaption>App: result</figcaption></figure><figure><a href="head/device/08-typed-data-sepolia.png" target="_blank"><img src="head/device/08-typed-data-sepolia.png" alt="Device #1" loading="lazy"></a><figcaption>Device #1</figcaption></figure><figure><a href="head/device/09-typed-data-sepolia.png" target="_blank"><img src="head/device/09-typed-data-sepolia.png" alt="Device #2" loading="lazy"></a><figcaption>Device #2</figcaption></figure><figure><a href="head/device/10-typed-data-sepolia.png" target="_blank"><img src="head/device/10-typed-data-sepolia.png" alt="Device #3" loading="lazy"></a><figcaption>Device #3</figcaption></figure><figure><a href="head/device/11-typed-data-sepolia.png" target="_blank"><img src="head/device/11-typed-data-sepolia.png" alt="Device #4" loading="lazy"></a><figcaption>Device #4</figcaption></figure><figure><a href="head/device/12-typed-data-sepolia.png" target="_blank"><img src="head/device/12-typed-data-sepolia.png" alt="Device #5" loading="lazy"></a><figcaption>Device #5</figcaption></figure><figure><a href="head/device/13-typed-data-sepolia.png" target="_blank"><img src="head/device/13-typed-data-sepolia.png" alt="Device #6" loading="lazy"></a><figcaption>Device #6</figcaption></figure><figure><a href="head/device/14-typed-data-sepolia.png" target="_blank"><img src="head/device/14-typed-data-sepolia.png" alt="Device #7" loading="lazy"></a><figcaption>Device #7</figcaption></figure><figure><a href="head/device/15-typed-data-sepolia.png" target="_blank"><img src="head/device/15-typed-data-sepolia.png" alt="Device #8" loading="lazy"></a><figcaption>Device #8</figcaption></figure><figure><a href="head/device/16-typed-data-sepolia.png" target="_blank"><img src="head/device/16-typed-data-sepolia.png" alt="Device #9" loading="lazy"></a><figcaption>Device #9</figcaption></figure><figure><a href="head/device/17-typed-data-sepolia.png" target="_blank"><img src="head/device/17-typed-data-sepolia.png" alt="Device #10" loading="lazy"></a><figcaption>Device #10</figcaption></figure><figure><a href="head/device/18-typed-data-sepolia.png" target="_blank"><img src="head/device/18-typed-data-sepolia.png" alt="Device #11" loading="lazy"></a><figcaption>Device #11</figcaption></figure><figure><a href="head/device/19-typed-data-sepolia.png" target="_blank"><img src="head/device/19-typed-data-sepolia.png" alt="Device #12" loading="lazy"></a><figcaption>Device #12</figcaption></figure></div></article>
+<article class="card"><div class="card-head"><h3><code>eth_signTypedData_v4</code> on Ethereum (<code>typed-data-mainnet</code>)</h3></div><div class="filmstrip"><figure><a href="head/app/07-typed-data-mainnet-request.png" target="_blank"><img src="head/app/07-typed-data-mainnet-request.png" alt="App: request" class="photo" loading="lazy"></a><figcaption>App: request</figcaption></figure><figure><a href="head/app/08-typed-data-mainnet-result.png" target="_blank"><img src="head/app/08-typed-data-mainnet-result.png" alt="App: result" class="photo" loading="lazy"></a><figcaption>App: result</figcaption></figure><figure><a href="head/device/21-typed-data-mainnet.png" target="_blank"><img src="head/device/21-typed-data-mainnet.png" alt="Device #1" loading="lazy"></a><figcaption>Device #1</figcaption></figure><figure><a href="head/device/22-typed-data-mainnet.png" target="_blank"><img src="head/device/22-typed-data-mainnet.png" alt="Device #2" loading="lazy"></a><figcaption>Device #2</figcaption></figure><figure><a href="head/device/23-typed-data-mainnet.png" target="_blank"><img src="head/device/23-typed-data-mainnet.png" alt="Device #3" loading="lazy"></a><figcaption>Device #3</figcaption></figure><figure><a href="head/device/24-typed-data-mainnet.png" target="_blank"><img src="head/device/24-typed-data-mainnet.png" alt="Device #4" loading="lazy"></a><figcaption>Device #4</figcaption></figure><figure><a href="head/device/25-typed-data-mainnet.png" target="_blank"><img src="head/device/25-typed-data-mainnet.png" alt="Device #5" loading="lazy"></a><figcaption>Device #5</figcaption></figure><figure><a href="head/device/26-typed-data-mainnet.png" target="_blank"><img src="head/device/26-typed-data-mainnet.png" alt="Device #6" loading="lazy"></a><figcaption>Device #6</figcaption></figure><figure><a href="head/device/27-typed-data-mainnet.png" target="_blank"><img src="head/device/27-typed-data-mainnet.png" alt="Device #7" loading="lazy"></a><figcaption>Device #7</figcaption></figure><figure><a href="head/device/28-typed-data-mainnet.png" target="_blank"><img src="head/device/28-typed-data-mainnet.png" alt="Device #8" loading="lazy"></a><figcaption>Device #8</figcaption></figure><figure><a href="head/device/29-typed-data-mainnet.png" target="_blank"><img src="head/device/29-typed-data-mainnet.png" alt="Device #9" loading="lazy"></a><figcaption>Device #9</figcaption></figure><figure><a href="head/device/30-typed-data-mainnet.png" target="_blank"><img src="head/device/30-typed-data-mainnet.png" alt="Device #10" loading="lazy"></a><figcaption>Device #10</figcaption></figure><figure><a href="head/device/31-typed-data-mainnet.png" target="_blank"><img src="head/device/31-typed-data-mainnet.png" alt="Device #11" loading="lazy"></a><figcaption>Device #11</figcaption></figure><figure><a href="head/device/32-typed-data-mainnet.png" target="_blank"><img src="head/device/32-typed-data-mainnet.png" alt="Device #12" loading="lazy"></a><figcaption>Device #12</figcaption></figure><figure><a href="head/device/33-typed-data-mainnet.png" target="_blank"><img src="head/device/33-typed-data-mainnet.png" alt="Device #13" loading="lazy"></a><figcaption>Device #13</figcaption></figure></div></article>
+<article class="card"><div class="card-head"><h3><code>eth_signTransaction</code> on Sepolia (<code>sign-tx-sepolia</code>)</h3></div><div class="filmstrip"><figure><a href="head/app/09-sign-tx-sepolia-request.png" target="_blank"><img src="head/app/09-sign-tx-sepolia-request.png" alt="App: request" class="photo" loading="lazy"></a><figcaption>App: request</figcaption></figure><figure><a href="head/app/10-sign-tx-sepolia-result.png" target="_blank"><img src="head/app/10-sign-tx-sepolia-result.png" alt="App: result" class="photo" loading="lazy"></a><figcaption>App: result</figcaption></figure><figure><a href="head/device/35-sign-tx-sepolia.png" target="_blank"><img src="head/device/35-sign-tx-sepolia.png" alt="Device #1" loading="lazy"></a><figcaption>Device #1</figcaption></figure><figure><a href="head/device/36-sign-tx-sepolia.png" target="_blank"><img src="head/device/36-sign-tx-sepolia.png" alt="Device #2" loading="lazy"></a><figcaption>Device #2</figcaption></figure><figure><a href="head/device/37-sign-tx-sepolia.png" target="_blank"><img src="head/device/37-sign-tx-sepolia.png" alt="Device #3" loading="lazy"></a><figcaption>Device #3</figcaption></figure><figure><a href="head/device/38-sign-tx-sepolia.png" target="_blank"><img src="head/device/38-sign-tx-sepolia.png" alt="Device #4" loading="lazy"></a><figcaption>Device #4</figcaption></figure></div></article>
+</div></details>
+<section class="ref-section"><h2>Reference &amp; advanced details</h2>
+<details><summary>What was tested (11)</summary><div><ul><li>A test dapp pairs with the BitBoxApp over the public WalletConnect relay and sends signing requests. The app approves each one, and the graphical simulator confirms it on the device. BitBoxApp is before and after this PR; firmware <code>2a6ddf178</code> and bitbox02-api-go the version the app vendors on both sides.</li><li>The app's Etherscan proxy is a local stand-in in front of local test chains, with the real proxy's request rules; the dapp checks that each sent transaction is on the chain.</li><li><code>pairing</code>: before session with 7 chains, 4 methods; after session with 7 chains, 4 methods.</li><li><code>personal_sign</code> on Sepolia (<code>personal-sign-sepolia</code>): before signed by the right account; after signed by the right account.</li><li><code>eth_signTypedData_v4</code> on Sepolia (<code>typed-data-sepolia</code>): before signed by the right account; after signed by the right account.</li><li><code>eth_signTypedData_v4</code> on Ethereum (<code>typed-data-mainnet</code>): before signed by the right account; after signed by the right account.</li><li><code>eth_signTransaction</code> on Sepolia (<code>sign-tx-sepolia</code>): before signed by the right account; after signed by the right account.</li><li><code>eth_sendTransaction</code> on Sepolia (<code>send-tx-sepolia</code>): before sent from the right account; after error -32000 Transaction submission is uncertain and may still confirm. Check its status before sending again.</li><li><code>eth_sendTransaction</code> on Sepolia (<code>send-tx-sepolia-large</code>): before sent from the right account; after error -32000 Request failed.</li><li><code>eth_sendTransaction</code> on Arbitrum One (<code>send-tx-arbitrum</code>): before sent from the right account; after error -32000 Transaction submission is uncertain and may still confirm. Check its status before sending again.</li><li><code>eth_sendTransaction</code> on Polygon (<code>send-tx-polygon</code>): before sent from the right account; after error -32000 Transaction submission is uncertain and may still confirm. Check its status before sending again.</li></ul></div></details>
+<details><summary>Versions, test matrix &amp; log locations</summary><div><table><tr><th></th><th>Before</th><th>After</th></tr><tr><th>firmware</th><td>2a6ddf178</td><td>2a6ddf178</td></tr><tr><th>BitBoxApp</th><td>132a8af18</td><td>Tomasvrba/3b6ff88303b67f7ccf55da8203f3bbb00399a089</td></tr><tr><th>bitbox02-api-go</th><td>shipped</td><td>shipped</td></tr><tr><th>simulator</th><td>bitbox02-multi-v9.30.0-simulator1.0.0-linux-amd64</td><td>bitbox02-multi-v9.30.0-simulator1.0.0-linux-amd64</td></tr></table><ul><li>Logs: */playwright.log, */device.log, */dapp.log.</li></ul></div></details>
+</section></main>
+</html>
